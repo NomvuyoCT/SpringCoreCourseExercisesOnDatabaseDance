@@ -58,4 +58,39 @@ class FestivalRepositoryTest extends
         festivalRepository.delete(id);
         assertThat(countRowsInTableWhere(FESTIVALS, "id = " + id)).isZero();
     }
+
+    @Test
+    void findAndLockById() {
+        assertThat(festivalRepository.findAndLockById(idVanFestival1()))
+                .hasValueSatisfying(
+                        festival -> assertThat(festival.getReclameBudget()).isEqualByComparingTo("festival")
+                );
+    }
+
+    @Test
+    void findAndLockByOnbestaandeIdVindGeenFestival() {
+        assertThat(festivalRepository.findAndLockById(Long.MAX_VALUE)).isEmpty();
+    }
+
+    @Test
+    void findAantal() {
+        assertThat(festivalRepository.findAantal()).isEqualTo(countRowsInTable(FESTIVALS));
+    }
+
+    @Test
+    void verhoogReclameBudgetVanAlleFestivalsMetTien() {
+        festivalRepository.verhoogReclameBudgetVanAlleFestivals((BigDecimal.TEN));
+        var id = idVanFestival1();
+        assertThat(countRowsInTableWhere(FESTIVALS,
+                "reclameBudget = 3000.00 and id = " + id)).isOne();
+    }
+
+    @Test
+    void update() {
+        var id = idVanFestival1();
+        var festival =new Festival(id, "festival1", 30, BigDecimal.valueOf(700));
+        festivalRepository.update(festival);
+        assertThat(countRowsInTableWhere(FESTIVALS,
+                "id = " + id)).isOne();
+    }
 }

@@ -1,12 +1,14 @@
 package be.vdab.dance.domain;
 
 
+import be.vdab.dance.exceptions.OnvoldoendeTicketsException;
+
 import java.math.BigDecimal;
 
 public class Festival {
     private final long id;
     private final String naam;
-    private final int ticketsBeschikbaar;
+    private  int ticketsBeschikbaar;
     private final BigDecimal reclameBudget;
 
     public Festival(long id, String naam, int ticketsBeschikbaar, BigDecimal reclameBudget) {
@@ -30,5 +32,12 @@ public class Festival {
 
     public BigDecimal getReclameBudget() {
         return reclameBudget;
+    }
+
+    public void boek(int aantalTickets){
+        if (ticketsBeschikbaar < aantalTickets){
+            throw new OnvoldoendeTicketsException();
+        }
+        ticketsBeschikbaar = ticketsBeschikbaar - aantalTickets;
     }
 }
